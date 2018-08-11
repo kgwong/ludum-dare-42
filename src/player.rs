@@ -4,6 +4,8 @@ use ggez::GameResult;
 
 use std::f32::{self, consts};
 
+use tile::*;
+
 pub enum Direction
 {
     UP,
@@ -73,11 +75,11 @@ impl Player
             offset: graphics::Point2::new(0.5, 0.5),
             ..Default::default()
         };
+        graphics::draw_ex(ctx, &self.sprite, param );
 
         //let test_sprite = graphics::Image::solid( ctx, 10, player_debug_color() ).unwrap();
         //let test_pos = graphics::Point2::new(self.pos_x, self.pos_y );
         //graphics::draw(ctx, &test_sprite, test_pos, 0.0 );
-        graphics::draw_ex(ctx, &self.sprite, param );
         Ok(())
     }
 
@@ -121,5 +123,30 @@ impl Player
             Direction::LEFT => { 90.0 }
             Direction::RIGHT => { 270.0 }
         }
+    }
+
+    pub fn pickup_tile( &mut self, tile_map: &mut TileMap )
+    {
+        let tile_distance : usize = 33;
+        let mut tile_index_x : usize = self.pos_x as usize / tile_distance;
+        let mut tile_index_y : usize = self.pos_y as usize / tile_distance;
+        println!("{}, {}", tile_index_x, tile_index_y);
+        match self.dir
+        {
+            Direction::UP => { tile_index_y -= 1; }
+            Direction::DOWN => { tile_index_y += 1; }
+            Direction::LEFT => { tile_index_x -= 1; }
+            Direction::RIGHT => { tile_index_x += 1; }
+        }       
+        let tile : &mut Tile = &mut tile_map.map[tile_index_y][tile_index_x];
+        match &tile.get_state()
+        {
+            TileState::FULL =>
+            {
+                tile.change_state( TileState::EMPTY );
+            }
+            _ => {}
+        }
+         
     }
 }

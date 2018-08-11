@@ -8,7 +8,7 @@ type TileRow = Vec<Tile>;
 
 pub struct TileMap
 {
-    map: Vec<TileRow>,
+    pub map: Vec<TileRow>,
     num_tiles_x: usize,
     num_tiles_y: usize,
 }
@@ -50,6 +50,7 @@ impl TileMap
     }
 }
 
+#[derive(PartialEq)]
 pub enum TileState 
 {
     FULL,
@@ -69,6 +70,11 @@ fn tile_test_color() -> graphics::Color
     graphics::Color::new(0.7, 0.8, 0.9, 1.0)
 }
 
+fn tile_missing_color() -> graphics::Color
+{
+    graphics::Color::new(1.0, 0.0, 0.0, 1.0)
+}
+
 impl Tile
 {
     pub fn new( ctx: &mut Context, index_x: usize, index_y: usize ) -> Tile
@@ -85,7 +91,28 @@ impl Tile
     pub fn draw( &mut self, ctx: &mut Context ) -> GameResult<()>
     {
         let dest_point = graphics::Point2::new( self.pos_x as f32, self.pos_y as f32 );
+        match self.state
+        {
+            TileState::FULL =>
+            {
+                self.sprite = graphics::Image::solid( ctx, 32, tile_test_color() ).unwrap();
+            }
+            TileState::EMPTY =>
+            {
+                self.sprite = graphics::Image::solid( ctx, 32, tile_missing_color() ).unwrap();
+            }
+        }
         graphics::draw(ctx, &self.sprite, dest_point, 0.0 );
         Ok(())
+    }
+
+    pub fn get_state( &self ) -> &TileState
+    {
+        &self.state
+    }
+
+    pub fn change_state( &mut self, tile_state: TileState ) 
+    {
+        self.state = tile_state;
     }
 }

@@ -48,7 +48,7 @@ impl event::EventHandler for MainState
 {
     fn update(&mut self, _ctx: &mut Context) -> GameResult<()> 
     {
-        println!("FPS: {}", timer::get_fps(_ctx ) );
+        //println!("FPS: {}", timer::get_fps(_ctx ) );
         self.player1.update();
         self.player2.update();
         Ok(())
@@ -76,6 +76,7 @@ impl event::EventHandler for MainState
             P2_DOWN => { self.player2.set_vel_y( PLAYER_SPEED ) }
             P2_LEFT => { self.player2.set_vel_x( -PLAYER_SPEED ) }
             P2_RIGHT => { self.player2.set_vel_x( PLAYER_SPEED ) }
+            Keycode::Space => { self.player1.pickup_tile( &mut self.tile_map ) }
             _ => {}
         }
     }
