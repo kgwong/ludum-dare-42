@@ -7,9 +7,10 @@ use player::Player;
 use player::Direction;
 use tile::TileMap;
 use tile::Tile;
+use tilesheet::SheetMap;
 
-const NUM_TILES_X : usize = 30;
-const NUM_TILES_Y : usize = 15;
+const NUM_TILES_X : usize = 8;
+const NUM_TILES_Y : usize = 16;
 
 const PLAYER_SPEED : f32 = 2.0;
 
@@ -17,17 +18,19 @@ const P1_UP : event::Keycode = Keycode::W;
 const P1_DOWN : event::Keycode = Keycode::S;
 const P1_LEFT : event::Keycode = Keycode::A;
 const P1_RIGHT : event::Keycode = Keycode::D;
+const P1_ACTION : event::Keycode = Keycode::Space;
 
 const P2_UP : event::Keycode = Keycode::Up;
 const P2_DOWN : event::Keycode = Keycode::Down;
 const P2_LEFT : event::Keycode = Keycode::Left;
 const P2_RIGHT : event::Keycode = Keycode::Right;
+const P2_ACTION : event::Keycode = Keycode::Return;
 
 pub struct MainState 
 {
     player1 : Player,
     player2 : Player, 
-    tile_map : TileMap, 
+    tile_map : TileMap,
 }
 
 impl MainState 
@@ -76,7 +79,10 @@ impl event::EventHandler for MainState
             P2_DOWN => { self.player2.set_vel_y( PLAYER_SPEED ) }
             P2_LEFT => { self.player2.set_vel_x( -PLAYER_SPEED ) }
             P2_RIGHT => { self.player2.set_vel_x( PLAYER_SPEED ) }
-            Keycode::Space => { self.player1.pickup_tile( ctx, &mut self.tile_map ) }
+
+            P1_ACTION => { self.player1.pickup_tile( ctx, &mut self.tile_map ) }
+            P2_ACTION => { self.player2.pickup_tile( ctx, &mut self.tile_map ) }
+            
             _ => {}
         }
     }

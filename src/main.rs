@@ -7,6 +7,8 @@ mod tile;
 mod player;
 mod projectile;
 mod main_state;
+mod tilesheet;
+
 use main_state::MainState;
 
 use ggez::conf;
@@ -14,8 +16,8 @@ use ggez::Context;
 use ggez::event;
 
 static GAME_TITLE: &'static str = "Ludum Dare";
-const WINDOW_HEIGHT : u32 = 495;
-const WINDOW_WIDTH : u32 = 990;
+const WINDOW_HEIGHT : u32 = 16 * 33;
+const WINDOW_WIDTH : u32 = 8 * 33;
 
 pub fn main() {
     let mut c = conf::Conf::new();

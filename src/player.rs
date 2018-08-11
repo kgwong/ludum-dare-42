@@ -26,11 +26,17 @@ pub struct Player
     dir: Direction,
     sprite: graphics::Image,
     tile: Option<Tile>,
+    tile_image_id: usize,
 }
 
 fn player_debug_color() -> graphics::Color
 {
     graphics::Color::new( 1.0, 0.0, 0.0, 1.0 )
+}
+
+fn tile_test_color() -> graphics::Color
+{
+    graphics::Color::new( 0.5, 0.5, 0.5, 1.0 )
 }
 
 impl Player
@@ -49,6 +55,7 @@ impl Player
             dir: init_dir,
             sprite: graphics::Image::new( ctx, "/robo.png" ).unwrap(),
             tile: None,
+            tile_image_id: 1,
         }
     }
 
@@ -72,16 +79,15 @@ impl Player
         let top_right = graphics::Point2::new(self.pos_x, self.pos_y );
         let param = graphics::DrawParam {
             dest: top_right,
-            scale: graphics::Point2::new( 6.0, 6.0,),
             rotation: self.get_facing_radians(),
             offset: graphics::Point2::new(0.5, 0.5),
             ..Default::default()
         };
         graphics::draw_ex(ctx, &self.sprite, param );
 
-        //let test_sprite = graphics::Image::solid( ctx, 10, player_debug_color() ).unwrap();
-        //let test_pos = graphics::Point2::new(self.pos_x, self.pos_y );
-        //graphics::draw(ctx, &test_sprite, test_pos, 0.0 );
+        let test_sprite = graphics::Image::solid( ctx, 10, player_debug_color() ).unwrap();
+        let test_pos = graphics::Point2::new(self.pos_x, self.pos_y );
+        graphics::draw(ctx, &test_sprite, test_pos, 0.0 );
 
         let tile_draw_pos : graphics::Point2 = graphics::Point2::new
         (
@@ -161,6 +167,18 @@ impl Player
         }
     }
 
+    pub fn on_action( &mut self, ctx: &mut Context, tile_map: &mut TileMap )
+    {
+        if self.tile.is_none()
+        {
+            self.pickup_tile(ctx, tile_map);
+        }
+        else
+        {
+            //self.throw_tile(ctx, tile_map);
+        }
+    }
+
     pub fn pickup_tile( &mut self, ctx: &mut Context, tile_map: &mut TileMap )
     {
         if self.tile.is_some() 
@@ -185,7 +203,9 @@ impl Player
             TileState::FULL =>
             {
                 tile.change_state( TileState::EMPTY );
-                self.tile = Some( Tile::new( ctx, 0, 0 ) );
+                let image = graphics::Image::solid( ctx, 32, tile_test_color() ).unwrap();
+                self.tile_image_id = tile.image_id;
+                self.tile = Some( Tile::new( ctx, 0, 0, self.tile_image_id ) );
             }
             _ => {}
         }

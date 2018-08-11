@@ -2,6 +2,8 @@ use ggez::graphics;
 use ggez::Context;
 use ggez::GameResult;
 
+use tilesheet::SheetMap;
+
 const TILE_SEPARATOR : usize = 1;
 
 type TileRow = Vec<Tile>;
@@ -11,6 +13,7 @@ pub struct TileMap
     pub map: Vec<TileRow>,
     num_tiles_x: usize,
     num_tiles_y: usize,
+    sheetmap: SheetMap, 
 }
 
 impl TileMap
@@ -22,6 +25,7 @@ impl TileMap
             map: Vec::new(),
             num_tiles_x,
             num_tiles_y,
+            sheetmap: SheetMap::new( _ctx )
         };
 
         for y_index in 0..num_tiles_y
@@ -29,7 +33,7 @@ impl TileMap
             let mut tile_row = Vec::new();
             for x_index in 0..num_tiles_x
             {
-                tile_row.push( Tile::new( _ctx, x_index, y_index ) );
+                tile_row.push( Tile::new( _ctx, x_index, y_index, res.sheetmap.map[y_index][x_index] ) );
             }
 
             res.map.push( tile_row );
@@ -63,6 +67,7 @@ pub struct Tile
     pos_y: usize,
     state: TileState,
     sprite: graphics::Image,
+    pub image_id: usize,
 }
 
 fn tile_test_color() -> graphics::Color
@@ -75,16 +80,24 @@ fn tile_missing_color() -> graphics::Color
     graphics::Color::new(1.0, 0.0, 0.0, 1.0)
 }
 
+fn get_image( ctx: &mut Context, id: usize ) -> graphics::Image
+{
+    let path = format!( "/tiles/sunflower_{:02}.png", id );
+    println!( "{}", path );
+    graphics::Image::new( ctx, path ).unwrap()
+}
+
 impl Tile
 {
-    pub fn new( ctx: &mut Context, index_x: usize, index_y: usize ) -> Tile
+    pub fn new( ctx: &mut Context, index_x: usize, index_y: usize, image_id: usize ) -> Tile
     { 
         Tile
         {
             pos_x: index_x * ( 32 + TILE_SEPARATOR ),
             pos_y: index_y * ( 32 + TILE_SEPARATOR ),
             state: TileState::FULL,
-            sprite: graphics::Image::solid( ctx, 32, tile_test_color() ).unwrap(),
+            sprite: get_image( ctx, image_id),
+            image_id: image_id
         }
     }
 
@@ -94,7 +107,7 @@ impl Tile
         {
             TileState::FULL =>
             {
-                self.sprite = graphics::Image::solid( ctx, 32, tile_test_color() ).unwrap();
+                //self.sprite = graphics::Image::solid( ctx, 32, tile_test_color() ).unwrap();
             }
             TileState::EMPTY =>
             {
