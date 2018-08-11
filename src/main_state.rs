@@ -4,6 +4,7 @@ use ggez::timer::*;
 use ggez::graphics::{DrawMode, Point2};
 
 use player::Player;
+use player::Direction;
 use tile::TileMap;
 use tile::Tile;
 
@@ -35,8 +36,8 @@ impl MainState
     {
         let s = MainState 
         { 
-            player1 : Player::new( _ctx, 1, 100, 100 ),
-            player2 : Player::new( _ctx, 2, 200, 200 ),
+            player1 : Player::new( _ctx, 1, 100, 100, Direction::RIGHT ),
+            player2 : Player::new( _ctx, 2, 200, 200, Direction::LEFT ),
             tile_map: TileMap::new( _ctx, NUM_TILES_X, NUM_TILES_Y ),
         };
         Ok(s)
