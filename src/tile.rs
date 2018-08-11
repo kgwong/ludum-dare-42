@@ -88,9 +88,8 @@ impl Tile
         }
     }
 
-    pub fn draw( &mut self, ctx: &mut Context ) -> GameResult<()>
+    pub fn draw_at_pos( &mut self, ctx: &mut Context, pos: &graphics::Point2 )
     {
-        let dest_point = graphics::Point2::new( self.pos_x as f32, self.pos_y as f32 );
         match self.state
         {
             TileState::FULL =>
@@ -102,8 +101,13 @@ impl Tile
                 self.sprite = graphics::Image::solid( ctx, 32, tile_missing_color() ).unwrap();
             }
         }
-        graphics::draw(ctx, &self.sprite, dest_point, 0.0 );
-        Ok(())
+        graphics::draw(ctx, &self.sprite, *pos, 0.0 );
+    } 
+
+    pub fn draw( &mut self, ctx: &mut Context )
+    {
+        let dest_point = graphics::Point2::new( self.pos_x as f32, self.pos_y as f32 );
+        self.draw_at_pos(ctx, &dest_point);
     }
 
     pub fn get_state( &self ) -> &TileState

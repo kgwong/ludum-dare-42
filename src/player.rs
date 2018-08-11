@@ -25,6 +25,7 @@ pub struct Player
     vel_y: f32,
     dir: Direction,
     sprite: graphics::Image,
+    tile: Option<Tile>,
 }
 
 fn player_debug_color() -> graphics::Color
@@ -47,6 +48,7 @@ impl Player
             vel_y: 0.0,
             dir: init_dir,
             sprite: graphics::Image::new( ctx, "/robo.png" ).unwrap(),
+            tile: None,
         }
     }
 
@@ -80,6 +82,20 @@ impl Player
         //let test_sprite = graphics::Image::solid( ctx, 10, player_debug_color() ).unwrap();
         //let test_pos = graphics::Point2::new(self.pos_x, self.pos_y );
         //graphics::draw(ctx, &test_sprite, test_pos, 0.0 );
+
+        let tile_draw_pos : graphics::Point2 = graphics::Point2::new
+        (
+            self.pos_x + self.get_tile_offset_x(),
+            self.pos_y + self.get_tile_offset_y() 
+        );
+        match self.tile
+        {
+            Some( ref mut tile ) =>
+            {
+                tile.draw_at_pos(ctx, &tile_draw_pos );
+            }
+            None => {}
+        }
         Ok(())
     }
 
@@ -125,8 +141,33 @@ impl Player
         }
     }
 
-    pub fn pickup_tile( &mut self, tile_map: &mut TileMap )
+    fn get_tile_offset_x( &self ) -> f32
     {
+        match self.dir
+        {
+            Direction::LEFT => { -32.0 }
+            Direction::RIGHT => { 32.0 }
+            _ => { 0.0 }
+        }
+    }
+
+    fn get_tile_offset_y( &self ) -> f32
+    {
+        match self.dir
+        {
+            Direction::UP => { -32.0 }
+            Direction::DOWN => { 32.0 }
+            _ => { 0.0 }
+        }
+    }
+
+    pub fn pickup_tile( &mut self, ctx: &mut Context, tile_map: &mut TileMap )
+    {
+        if self.tile.is_some() 
+        {
+            return;
+        }
+
         let tile_distance : usize = 33;
         let mut tile_index_x : usize = self.pos_x as usize / tile_distance;
         let mut tile_index_y : usize = self.pos_y as usize / tile_distance;
@@ -144,6 +185,7 @@ impl Player
             TileState::FULL =>
             {
                 tile.change_state( TileState::EMPTY );
+                self.tile = Some( Tile::new( ctx, 0, 0 ) );
             }
             _ => {}
         }

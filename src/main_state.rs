@@ -76,7 +76,7 @@ impl event::EventHandler for MainState
             P2_DOWN => { self.player2.set_vel_y( PLAYER_SPEED ) }
             P2_LEFT => { self.player2.set_vel_x( -PLAYER_SPEED ) }
             P2_RIGHT => { self.player2.set_vel_x( PLAYER_SPEED ) }
-            Keycode::Space => { self.player1.pickup_tile( &mut self.tile_map ) }
+            Keycode::Space => { self.player1.pickup_tile( ctx, &mut self.tile_map ) }
             _ => {}
         }
     }
