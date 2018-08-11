@@ -27,7 +27,7 @@ pub struct Player
 
 fn player_debug_color() -> graphics::Color
 {
-    graphics::Color::new( 0.5, 0.5, 0.5, 1.0 )
+    graphics::Color::new( 1.0, 0.0, 0.0, 1.0 )
 }
 
 impl Player
@@ -54,10 +54,30 @@ impl Player
         self.pos_y += self.vel_y;
     }
 
-    pub fn draw( &mut self, ctx: &mut Context ) -> GameResult<()>
+    fn get_center( &self ) -> graphics::Point2
     {
-        let dest_point = graphics::Point2::new( self.pos_x, self.pos_y );
-        graphics::draw(ctx, &self.sprite, dest_point, self.get_facing_radians() );
+        graphics::Point2::new( 
+            ( self.pos_x + self.width as f32 / 2.0 ), 
+            ( self.pos_y + self.height as f32 / 2.0 ),
+            )
+    }
+
+    pub fn draw( &mut self, ctx: &mut Context ) -> GameResult<()>
+    {       
+        //let center = self.get_center();
+        let top_right = graphics::Point2::new(self.pos_x, self.pos_y );
+        let param = graphics::DrawParam {
+            dest: top_right,
+            scale: graphics::Point2::new( 6.0, 6.0,),
+            rotation: self.get_facing_radians(),
+            offset: graphics::Point2::new(0.5, 0.5),
+            ..Default::default()
+        };
+
+        //let test_sprite = graphics::Image::solid( ctx, 10, player_debug_color() ).unwrap();
+        //let test_pos = graphics::Point2::new(self.pos_x, self.pos_y );
+        //graphics::draw(ctx, &test_sprite, test_pos, 0.0 );
+        graphics::draw_ex(ctx, &self.sprite, param );
         Ok(())
     }
 
