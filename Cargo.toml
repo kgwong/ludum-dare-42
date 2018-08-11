@@ -1,0 +1,10 @@
+[package]
+name = "ludum_dare"
+version = "0.1.0"
+authors = ["Kevin Wong <wong.kevin47@gmail.com>"]
+build = "build.rs"
+
+[dependencies]
+ggez = "0.4.3"
+nphysics2d = "0.9.0"
+ncollide2d = "0.17"
