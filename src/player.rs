@@ -32,6 +32,7 @@ pub struct Player
     tile: Option<Tile>,
     tile_image_id: usize,
     hitbox: Hitbox,
+    is_dead: bool,
 }
 
 fn player_debug_color() -> graphics::Color
@@ -62,22 +63,43 @@ impl Player
             tile: None,
             tile_image_id: 1,
             hitbox: Hitbox::new( pos_x as f32, pos_y as f32, 32.0, 32.0 ),
+            is_dead: false,
         }
     }
 
-    pub fn update( &mut self, projectiles: &mut Vec<Projectile> )
+    pub fn update( &mut self, projectiles: &mut Vec<Projectile>, tile_map: &TileMap )
     {
+        if self.is_dead
+        {
+            return;
+        }
         self.pos_x += self.vel_x;
         self.pos_y += self.vel_y;
 
         self.hitbox.top_x = self.pos_x;
         self.hitbox.top_y = self.pos_y;
 
+        //check if we are standing on top of a tile
+        let center = self.get_center();
+        let tile_distance : usize = TILE_SPACE;
+        let mut tile_index_x : usize = self.pos_x as usize / tile_distance;
+        let mut tile_index_y : usize = self.pos_y as usize / tile_distance;
+
+        let tile = &tile_map.map[tile_index_y][tile_index_x];
+        match tile.get_state()
+        {
+            TileState::EMPTY => {
+                self.is_dead = true;
+            }
+            _ => {}
+        }
+
         for projectile in projectiles
         {
             if self.id != projectile.get_owner() && self.hitbox.check_collision( projectile.get_hitbox() )
             {
                 projectile.kill();
+                self.is_dead = true;
             }
         }
     }
@@ -95,8 +117,17 @@ impl Player
         self.id
     }
 
+    pub fn is_dead( &self ) -> bool
+    {
+        self.is_dead
+    }
+
     pub fn draw( &mut self, ctx: &mut Context ) -> GameResult<()>
     {       
+        if self.is_dead
+        {
+            return Ok(());
+        }
         //let center = self.get_center();
         let top_right = graphics::Point2::new(self.pos_x, self.pos_y );
         let param = graphics::DrawParam {
@@ -130,11 +161,11 @@ impl Player
     pub fn set_vel_x( &mut self, vel_x: f32 )
     {
         self.vel_x = vel_x;
-        if (self.vel_x > 0.0 )
+        if self.vel_x > 0.0 
         {
             self.dir = Direction::RIGHT;
         }
-        else if ( self.vel_x < 0.0 )
+        else if self.vel_x < 0.0
         {
             self.dir = Direction::LEFT;
         }
@@ -143,11 +174,11 @@ impl Player
     pub fn set_vel_y( &mut self, vel_y: f32 )
     {
         self.vel_y = vel_y;
-        if (self.vel_y > 0.0 )
+        if self.vel_y > 0.0
         {
             self.dir = Direction::DOWN;
         }
-        else if ( self.vel_y < 0.0 )
+        else if self.vel_y < 0.0
         {
             self.dir = Direction::UP;
         }
@@ -244,7 +275,6 @@ impl Player
         let tile_distance : usize = TILE_SPACE;
         let mut tile_index_x : usize = self.pos_x as usize / tile_distance;
         let mut tile_index_y : usize = self.pos_y as usize / tile_distance;
-        println!("{}, {}", tile_index_x, tile_index_y);
         match self.dir
         {
             Direction::UP => { tile_index_y -= 1; }
@@ -252,7 +282,7 @@ impl Player
             Direction::LEFT => { tile_index_x -= 1; }
             Direction::RIGHT => { tile_index_x += 1; }
         }       
-        let tile : &mut Tile = &mut tile_map.map[tile_index_y][tile_index_x];
+        let tile = &mut tile_map.map[tile_index_y][tile_index_x];
         match &tile.get_state()
         {
             TileState::FULL =>

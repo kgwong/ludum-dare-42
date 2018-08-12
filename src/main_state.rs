@@ -53,8 +53,8 @@ impl event::EventHandler for MainState
     fn update(&mut self, _ctx: &mut Context) -> GameResult<()> 
     {
         //println!("FPS: {}", timer::get_fps(_ctx ) );
-        self.player1.update( &mut self.projectiles );
-        self.player2.update( &mut self.projectiles );
+        self.player1.update( &mut self.projectiles, &self.tile_map );
+        self.player2.update( &mut self.projectiles, &self.tile_map );
         for ref mut projectile in &mut self.projectiles
         {
             projectile.update();

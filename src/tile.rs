@@ -95,7 +95,6 @@ fn tile_missing_color() -> graphics::Color
 pub fn get_image( ctx: &mut Context, id: usize ) -> graphics::Image
 {
     let path = format!( "/tiles/sunflower_{:02}.png", id );
-    println!( "{}", path );
     graphics::Image::new( ctx, path ).unwrap()
 }
 
