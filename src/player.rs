@@ -7,6 +7,7 @@ use std::f32::{self, consts};
 use tile::*;
 use projectile::*;
 use hitbox::*;
+use anim::*;
 
 const THROW_SPEED : f32 = 3.0;
 
@@ -68,8 +69,8 @@ impl Player
             is_dead: false,
         };
         if id == 1 
-        {
-            //p.sprite = graphics::Image::new( ctx, "/robo_red.png" ).unwrap();
+        { 
+            p.sprite = graphics::Image::new( ctx, "/robo_red.png" ).unwrap();
         }
         p
     }
@@ -104,7 +105,7 @@ impl Player
         self.pos_y += self.get_adj_vel_y() * factor;
     }
 
-    pub fn update( &mut self, projectiles: &mut Vec<Projectile>, tile_map: &TileMap, factor: f32)
+    pub fn update( &mut self, ctx: &mut Context, projectiles: &mut Vec<Projectile>, anims: &mut Vec<Anim>, tile_map: &TileMap, factor: f32)
     {
         if self.is_dead
         {
@@ -135,6 +136,8 @@ impl Player
             {
                 projectile.kill();
                 self.is_dead = true;
+                let prefix = "/collision/collision_animation_";
+                anims.push( Anim::new(ctx, self.pos_x - 32.0, self.pos_y - 32.0, prefix.to_string(), 4, 10 ) );
             }
         }
     }

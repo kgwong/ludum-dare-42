@@ -58,7 +58,7 @@ impl Projectile
 
         if self.is_dead
         {
-            anims.push( Anim::new(_ctx, self.pos_x, self.pos_y, prefix, 3, 10 ) );
+            anims.push( Anim::new(_ctx, self.pos_x - 16.0, self.pos_y - 16.0, prefix, 3, 4 ) );
         }
     }
 
