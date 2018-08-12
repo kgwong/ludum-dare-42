@@ -38,10 +38,10 @@ impl Projectile
         }
     }
 
-    pub fn update( &mut self )
+    pub fn update( &mut self, factor: f32 )
     {
-        self.pos_x += self.vel_x;
-        self.pos_y += self.vel_y;
+        self.pos_x += self.vel_x * factor;
+        self.pos_y += self.vel_y * factor;
         self.hitbox.top_x = self.pos_x;
         self.hitbox.top_y = self.pos_y;
     }

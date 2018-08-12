@@ -12,6 +12,8 @@ pub const NUM_TILES_X : usize = TILE_SHEET_NUM_ACROSS + 2;
 pub const NUM_TILES_Y : usize = TILE_SHEET_NUM_DOWN + 2;
 
 const PLAYER_SPEED : f32 = 2.0;
+const EXPECTED_FRAME_RATE : f64 = 60.0;
+const EXPECTED_TIME_BETWEEN_FRAMES : f64 = 1.0/EXPECTED_FRAME_RATE;
 
 const P1_UP : event::Keycode = Keycode::W;
 const P1_DOWN : event::Keycode = Keycode::S;
@@ -60,12 +62,20 @@ impl event::EventHandler for MainState
 {
     fn update(&mut self, _ctx: &mut Context) -> GameResult<()> 
     {
-        println!("FPS: {}", timer::get_fps(_ctx ) );
-        self.player1.update( &mut self.projectiles, &self.tile_map );
-        self.player2.update( &mut self.projectiles, &self.tile_map );
+
+        let delta = (timer::duration_to_f64(timer::get_delta(_ctx))) as f32;
+        let factor = delta / (EXPECTED_TIME_BETWEEN_FRAMES) as f32;
+
+        if timer::get_ticks(_ctx) % 1000 == 0 {
+            println!("Average FPS: {}", timer::get_fps(_ctx));
+            println!("Factor is  {}", factor);
+        }
+
+        self.player1.update( &mut self.projectiles, &self.tile_map, factor );
+        self.player2.update( &mut self.projectiles, &self.tile_map, factor );
         for ref mut projectile in &mut self.projectiles
         {
-            projectile.update();
+            projectile.update(factor);
         }
         Ok(())
     }
@@ -73,6 +83,7 @@ impl event::EventHandler for MainState
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> 
    {
         graphics::clear(ctx);
+
         self.tile_map.draw( ctx );
         self.player1.draw( ctx );
         self.player2.draw( ctx );

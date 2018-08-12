@@ -8,7 +8,7 @@ use tile::*;
 use projectile::*;
 use hitbox::*;
 
-const THROW_SPEED : f32 = 1.0;
+const THROW_SPEED : f32 = 3.0;
 
 pub enum Direction
 {
@@ -93,19 +93,19 @@ impl Player
         }
     }
 
-    fn change_pos_from_vel( &mut self )
+    fn change_pos_from_vel( &mut self, factor: f32 )
     {
-        self.pos_x += self.get_adj_vel_x();
-        self.pos_y += self.get_adj_vel_y();
+        self.pos_x += self.get_adj_vel_x() * factor;
+        self.pos_y += self.get_adj_vel_y() * factor;
     }
 
-    pub fn update( &mut self, projectiles: &mut Vec<Projectile>, tile_map: &TileMap )
+    pub fn update( &mut self, projectiles: &mut Vec<Projectile>, tile_map: &TileMap, factor: f32)
     {
         if self.is_dead
         {
             return;
         }
-        self.change_pos_from_vel();
+        self.change_pos_from_vel(factor);
         self.hitbox.top_x = self.pos_x - self.width as f32 / 2.0;
         self.hitbox.top_y = self.pos_y - self.height as f32 / 2.0;
 
