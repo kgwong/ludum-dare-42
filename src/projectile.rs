@@ -48,6 +48,17 @@ impl Projectile
 
     pub fn draw( &mut self, ctx: &mut Context )
     {
+        //draaw shadow
+        let shadow_draw_pos : graphics::Point2 = graphics::Point2::new
+        (
+            self.pos_x + 2.0,
+            self.pos_y + 5.0
+        );
+        let color = graphics::Color::new( 0.0, 0.0, 0.0, 0.7);
+        let shadow = graphics::Image::solid( ctx, 32, color).unwrap();
+        graphics::draw(ctx, &shadow, shadow_draw_pos, 0.0);
+
+        //draw self
         let dest_point = graphics::Point2::new( self.pos_x, self.pos_y);
         graphics::draw(ctx, &self.sprite, dest_point, 0.0 );
     }
@@ -60,7 +71,6 @@ impl Projectile
 
     pub fn kill( &mut self ) 
     {
-        println!("dead");
         self.is_dead = true;
     }
 
