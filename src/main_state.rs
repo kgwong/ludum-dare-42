@@ -3,14 +3,12 @@ use ggez::event::*;
 use ggez::timer::*;
 use ggez::graphics::{DrawMode, Point2};
 
-use player::Player;
-use player::Direction;
-use tile::TileMap;
-use tile::Tile;
-use tilesheet::SheetMap;
+use player::*;
+use tile::*;
+use tilesheet::*;
 
-const NUM_TILES_X : usize = 8;
-const NUM_TILES_Y : usize = 16;
+pub const NUM_TILES_X : usize = TILE_SHEET_NUM_ACROSS + 2;
+pub const NUM_TILES_Y : usize = TILE_SHEET_NUM_DOWN + 2;
 
 const PLAYER_SPEED : f32 = 2.0;
 

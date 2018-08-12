@@ -2,8 +2,8 @@ use ggez::graphics;
 use ggez::Context;
 use ggez::GameResult;
 
-const NUM_ACROSS : usize = 8;
-const NUM_DOWN : usize = 16; 
+pub const TILE_SHEET_NUM_ACROSS : usize = 8;
+pub const TILE_SHEET_NUM_DOWN : usize = 16; 
 
 type SheetRow = Vec<usize>;
 
@@ -22,8 +22,8 @@ impl SheetMap
         let mut res = SheetMap
         {
             map: Vec::new(),
-            num_tiles_across : NUM_ACROSS,
-            num_tiles_down : NUM_DOWN,
+            num_tiles_across : TILE_SHEET_NUM_ACROSS,
+            num_tiles_down : TILE_SHEET_NUM_DOWN,
         };
 
         let mut i : usize = 1;
