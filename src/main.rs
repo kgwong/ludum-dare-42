@@ -11,7 +11,6 @@ mod main_state;
 
 use main_state::*;
 use tile::*;
-use tilesheet::*;
 
 use ggez::conf;
 use ggez::Context;

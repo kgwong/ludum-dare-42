@@ -104,8 +104,8 @@ impl Player
             return;
         }
         self.change_pos_from_vel();
-        self.hitbox.top_x = self.pos_x;
-        self.hitbox.top_y = self.pos_y;
+        self.hitbox.top_x = self.pos_x - self.width as f32 / 2.0;
+        self.hitbox.top_y = self.pos_y - self.height as f32 / 2.0;
 
         //check if we are standing on top of a tile
         let center = self.get_center();
@@ -135,8 +135,8 @@ impl Player
     fn get_center( &self ) -> graphics::Point2
     {
         graphics::Point2::new( 
-            ( self.pos_x + self.width as f32 / 2.0 ), 
-            ( self.pos_y + self.height as f32 / 2.0 ),
+            self.pos_x + self.width as f32 / 2.0, 
+            self.pos_y + self.height as f32 / 2.0,
             )
     }
 
@@ -166,9 +166,10 @@ impl Player
         };
         graphics::draw_ex(ctx, &self.sprite, param );
 
-        let test_sprite = graphics::Image::solid( ctx, 10, player_debug_color() ).unwrap();
-        let test_pos = graphics::Point2::new(self.pos_x, self.pos_y );
+        /*let test_sprite = graphics::Image::solid( ctx, 32, player_debug_color() ).unwrap();
+        let test_pos = graphics::Point2::new(self.pos_x - self.width as f32 / 2.0, self.pos_y - self.height as f32 / 2.0);
         graphics::draw(ctx, &test_sprite, test_pos, 0.0 );
+        */
 
         let tile_draw_pos : graphics::Point2 = graphics::Point2::new
         (
@@ -285,7 +286,7 @@ impl Player
 
     pub fn on_action( &mut self, ctx: &mut Context, tile_map: &mut TileMap, projectiles: &mut Vec<Projectile> )
     {
-        if ( self.is_dead )
+        if self.is_dead
         {
             return;
         }

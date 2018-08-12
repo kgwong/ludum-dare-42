@@ -39,12 +39,20 @@ impl MainState
     {
         let s = MainState 
         { 
-            player1 : Player::new( _ctx, 1, 100, 100, Direction::RIGHT ),
-            player2 : Player::new( _ctx, 2, 200, 200, Direction::LEFT ),
+            player1 : Player::new( _ctx, 1, ::WINDOW_WIDTH / 2, 160, Direction::DOWN ),
+            player2 : Player::new( _ctx, 2, ::WINDOW_WIDTH / 2, ::WINDOW_HEIGHT - 160, Direction::UP ),
             tile_map: TileMap::new( _ctx, NUM_TILES_X, NUM_TILES_Y ),
             projectiles: Vec::new(),
         };
         Ok(s)
+    }
+
+    fn reset( &mut self, _ctx: &mut Context)
+    {
+        self.player1 = Player::new( _ctx, 1, ::WINDOW_WIDTH / 2, 160, Direction::DOWN );
+        self.player2 = Player::new( _ctx, 2, ::WINDOW_WIDTH / 2, ::WINDOW_HEIGHT - 160, Direction::UP );
+        self.tile_map = TileMap::new( _ctx, NUM_TILES_X, NUM_TILES_Y );
+        self.projectiles = Vec::new();
     }
 }
 
@@ -97,6 +105,8 @@ impl event::EventHandler for MainState
             P1_ACTION => { self.player1.on_action( ctx, &mut self.tile_map, &mut self.projectiles ) }
             P2_ACTION => { self.player2.on_action( ctx, &mut self.tile_map, &mut self.projectiles ) }
             
+            Keycode::F5 => { self.reset( ctx ); }
+
             _ => {}
         }
     }

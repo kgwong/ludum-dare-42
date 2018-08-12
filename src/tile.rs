@@ -37,7 +37,7 @@ impl TileMap
             for x_index in 0..num_tiles_x
             {
                 //edge tiles
-                if ( y_index == 0 || y_index == num_tiles_y -1 || x_index == 0 || x_index == num_tiles_x -1 )
+                if y_index == 0 || y_index == num_tiles_y -1 || x_index == 0 || x_index == num_tiles_x -1 
                 {
                     tile_row.push( Tile::new_empty( _ctx, x_index, y_index ) );
                 }
