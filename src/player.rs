@@ -67,15 +67,43 @@ impl Player
         }
     }
 
+    fn get_adj_vel_x( &mut self ) -> f32
+    {
+        if self.vel_x != 0.0 && self.vel_y != 0.0
+        {
+            self.vel_x * 0.7
+        }
+        else
+        {
+            self.vel_x
+        }
+    }
+
+    fn get_adj_vel_y( &mut self ) -> f32
+    {
+        if self.vel_x != 0.0 && self.vel_y != 0.0
+        {
+            self.vel_y * 0.7
+        }
+        else
+        {
+            self.vel_y
+        }
+    }
+
+    fn change_pos_from_vel( &mut self )
+    {
+        self.pos_x += self.get_adj_vel_x();
+        self.pos_y += self.get_adj_vel_y();
+    }
+
     pub fn update( &mut self, projectiles: &mut Vec<Projectile>, tile_map: &TileMap )
     {
         if self.is_dead
         {
             return;
         }
-        self.pos_x += self.vel_x;
-        self.pos_y += self.vel_y;
-
+        self.change_pos_from_vel();
         self.hitbox.top_x = self.pos_x;
         self.hitbox.top_y = self.pos_y;
 
@@ -184,6 +212,41 @@ impl Player
         }
     }
 
+    pub fn on_dir_released( &mut self, dir: Direction )
+    {
+        match dir 
+        {
+            Direction::UP => 
+            { 
+                if self.vel_y < 0.0
+                {
+                    self.vel_y = 0.0;
+                }
+            }
+            Direction::DOWN => 
+            {
+                if self.vel_y > 0.0
+                {
+                    self.vel_y = 0.0;
+                }
+            }
+            Direction::LEFT =>
+            {
+                 if self.vel_x < 0.0
+                 {
+                     self.vel_x = 0.0;
+                 }
+            }
+            Direction::RIGHT => 
+            { 
+                if self.vel_x > 0.0
+                {
+                    self.vel_x = 0.0;
+                } 
+            }         
+        }
+    }
+
     fn get_facing_radians( &self ) -> f32
     {
         self.get_facing_degrees().to_radians()
@@ -222,6 +285,10 @@ impl Player
 
     pub fn on_action( &mut self, ctx: &mut Context, tile_map: &mut TileMap, projectiles: &mut Vec<Projectile> )
     {
+        if ( self.is_dead )
+        {
+            return;
+        }
         if self.tile.is_none()
         {
             self.pickup_tile(ctx, tile_map);
@@ -240,8 +307,8 @@ impl Player
             self.id, 
             self.pos_x + self.get_tile_offset_x(), 
             self.pos_y + self.get_tile_offset_y(), 
-            self.vel_x + self.get_throw_vel_x(),
-            self.vel_y + self.get_throw_vel_y(),
+            self.get_adj_vel_x() + self.get_throw_vel_x(),
+            self.get_adj_vel_y() + self.get_throw_vel_y(),
             self.tile_image_id ));
     }
 

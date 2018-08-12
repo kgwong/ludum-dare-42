@@ -105,15 +105,16 @@ impl event::EventHandler for MainState
     {
         match keycode
         {
-            P1_UP => { self.player1.set_vel_y( 0.0 ) }
-            P1_DOWN => { self.player1.set_vel_y( 0.0 ) }
-            P1_LEFT => { self.player1.set_vel_x( 0.0 ) }
-            P1_RIGHT => { self.player1.set_vel_x( 0.0 ) }
-            P2_UP => { self.player2.set_vel_y( 0.0 ) }
-            P2_DOWN => { self.player2.set_vel_y( 0.0 ) }
-            P2_LEFT => { self.player2.set_vel_x( 0.0 ) }
-            P2_RIGHT => { self.player2.set_vel_x( 0.0 ) }
+            P1_UP => { self.player1.on_dir_released(Direction::UP) }
+            P1_DOWN => { self.player1.on_dir_released(Direction::DOWN) }
+            P1_LEFT => { self.player1.on_dir_released(Direction::LEFT)}
+            P1_RIGHT => { self.player1.on_dir_released(Direction::RIGHT)}
+            P2_UP => { self.player2.on_dir_released(Direction::UP)}
+            P2_DOWN => { self.player2.on_dir_released(Direction::DOWN) }
+            P2_LEFT => { self.player2.on_dir_released(Direction::LEFT) }
+            P2_RIGHT => { self.player2.on_dir_released(Direction::RIGHT)}
             _ => {}
         }
+        
     }
 }
