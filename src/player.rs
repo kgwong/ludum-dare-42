@@ -35,6 +35,8 @@ pub struct Player
     tile_image_id: usize,
     hitbox: Hitbox,
     is_dead: bool,
+    scale: f32,
+    fall: bool,
 }
 
 fn player_debug_color() -> graphics::Color
@@ -67,6 +69,8 @@ impl Player
             tile_image_id: 1,
             hitbox: Hitbox::new( pos_x as f32, pos_y as f32, 32.0, 32.0 ),
             is_dead: false,
+            scale: 1.0,
+            fall: false,
         };
         if id == 1 
         { 
@@ -111,6 +115,16 @@ impl Player
         {
             return;
         }
+
+        if self.fall
+        {
+            self.scale -= 0.05;
+            if self.scale < 0.01
+            {
+                self.scale = 0.01;
+                self.is_dead = true;
+            }
+        }
         self.change_pos_from_vel(factor);
         self.hitbox.top_x = self.pos_x - self.width as f32 / 2.0;
         self.hitbox.top_y = self.pos_y - self.height as f32 / 2.0;
@@ -125,7 +139,8 @@ impl Player
         match tile.get_state()
         {
             TileState::EMPTY => {
-                self.is_dead = true;
+                //self.is_dead = true;
+                self.fall = true;
             }
             _ => {}
         }
@@ -173,6 +188,7 @@ impl Player
             dest: top_right,
             rotation: self.get_facing_radians(),
             offset: graphics::Point2::new(0.5, 0.5),
+            scale: graphics::Point2::new( self.scale, self.scale ),
             ..Default::default()
         };
         graphics::draw_ex(ctx, &self.shadow_sprite, param );
@@ -182,6 +198,7 @@ impl Player
             dest: top_right,
             rotation: self.get_facing_radians(),
             offset: graphics::Point2::new(0.5, 0.5),
+            scale: graphics::Point2::new( self.scale, self.scale ),
             ..Default::default()
         };
         graphics::draw_ex(ctx, &self.sprite, param );
