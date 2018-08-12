@@ -6,6 +6,7 @@ use ggez::graphics::{DrawMode, Point2};
 use player::*;
 use tile::*;
 use tilesheet::*;
+use projectile::*;
 
 pub const NUM_TILES_X : usize = TILE_SHEET_NUM_ACROSS + 2;
 pub const NUM_TILES_Y : usize = TILE_SHEET_NUM_DOWN + 2;
@@ -29,6 +30,7 @@ pub struct MainState
     player1 : Player,
     player2 : Player, 
     tile_map: TileMap,
+    projectiles: Vec<Projectile>,
 }
 
 impl MainState 
@@ -40,6 +42,7 @@ impl MainState
             player1 : Player::new( _ctx, 1, 100, 100, Direction::RIGHT ),
             player2 : Player::new( _ctx, 2, 200, 200, Direction::LEFT ),
             tile_map: TileMap::new( _ctx, NUM_TILES_X, NUM_TILES_Y ),
+            projectiles: Vec::new(),
         };
         Ok(s)
     }
@@ -52,6 +55,10 @@ impl event::EventHandler for MainState
         //println!("FPS: {}", timer::get_fps(_ctx ) );
         self.player1.update();
         self.player2.update();
+        for ref mut projectile in &mut self.projectiles
+        {
+            projectile.update();
+        }
         Ok(())
     }
 
@@ -61,6 +68,10 @@ impl event::EventHandler for MainState
         self.tile_map.draw( ctx );
         self.player1.draw( ctx );
         self.player2.draw( ctx );
+        for ref mut projectile in &mut self.projectiles
+        {
+            projectile.draw( ctx );
+        }
         graphics::present(ctx);
         Ok(())
     }
@@ -78,8 +89,8 @@ impl event::EventHandler for MainState
             P2_LEFT => { self.player2.set_vel_x( -PLAYER_SPEED ) }
             P2_RIGHT => { self.player2.set_vel_x( PLAYER_SPEED ) }
 
-            P1_ACTION => { self.player1.on_action( ctx, &mut self.tile_map ) }
-            P2_ACTION => { self.player2.on_action( ctx, &mut self.tile_map ) }
+            P1_ACTION => { self.player1.on_action( ctx, &mut self.tile_map, &mut self.projectiles ) }
+            P2_ACTION => { self.player2.on_action( ctx, &mut self.tile_map, &mut self.projectiles ) }
             
             _ => {}
         }

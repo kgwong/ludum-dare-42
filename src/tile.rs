@@ -3,6 +3,7 @@ use ggez::Context;
 use ggez::GameResult;
 
 use tilesheet::SheetMap;
+use projectile::Projectile;
 
 pub const TILE_SEPARATOR : usize = 2;
 pub const TILE_SIZE : usize = 32;
@@ -91,7 +92,7 @@ fn tile_missing_color() -> graphics::Color
     graphics::Color::new(0.3, 0.3, 0.3, 1.0)
 }
 
-fn get_image( ctx: &mut Context, id: usize ) -> graphics::Image
+pub fn get_image( ctx: &mut Context, id: usize ) -> graphics::Image
 {
     let path = format!( "/tiles/sunflower_{:02}.png", id );
     println!( "{}", path );

@@ -5,6 +5,9 @@ use ggez::GameResult;
 use std::f32::{self, consts};
 
 use tile::*;
+use projectile::*;
+
+const THROW_SPEED : f32 = 1.0;
 
 pub enum Direction
 {
@@ -167,7 +170,7 @@ impl Player
         }
     }
 
-    pub fn on_action( &mut self, ctx: &mut Context, tile_map: &mut TileMap )
+    pub fn on_action( &mut self, ctx: &mut Context, tile_map: &mut TileMap, projectiles: &mut Vec<Projectile> )
     {
         if self.tile.is_none()
         {
@@ -175,13 +178,41 @@ impl Player
         }
         else
         {
-            self.throw_tile(ctx, tile_map);
+            self.throw_tile(ctx, projectiles);
         }
     }
 
-    fn throw_tile( &mut self, ctx: &mut Context, tile_map: &mut TileMap )
+    fn throw_tile( &mut self, ctx: &mut Context, projectiles: &mut Vec<Projectile> )
     {
         self.tile = None;
+        projectiles.push( Projectile::new( 
+            ctx, 
+            self.id, 
+            self.pos_x + self.get_tile_offset_x(), 
+            self.pos_y + self.get_tile_offset_y(), 
+            self.vel_x + self.get_throw_vel_x(),
+            self.vel_y + self.get_throw_vel_y(),
+            self.tile_image_id ));
+    }
+
+    fn get_throw_vel_x( &self ) -> f32
+    {
+        match self.dir
+        {
+            Direction::LEFT => { -THROW_SPEED }
+            Direction::RIGHT => { THROW_SPEED }
+            _ => { 0.0 }
+        }
+    }
+
+    fn get_throw_vel_y( &self ) -> f32
+    {
+        match self.dir
+        {
+            Direction::UP => { -THROW_SPEED }
+            Direction::DOWN => { THROW_SPEED }
+            _ => { 0.0 }
+        }
     }
 
     pub fn pickup_tile( &mut self, ctx: &mut Context, tile_map: &mut TileMap )
