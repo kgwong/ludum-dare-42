@@ -6,6 +6,7 @@ use ggez::Context;
 use tile::*;
 
 use player::*;
+use anim::*;
 
 pub struct Projectile
 {
@@ -38,12 +39,27 @@ impl Projectile
         }
     }
 
-    pub fn update( &mut self, factor: f32 )
+    pub fn update( &mut self, _ctx: &mut Context, factor: f32, anims: &mut Vec<Anim> )
     {
         self.pos_x += self.vel_x * factor;
         self.pos_y += self.vel_y * factor;
         self.hitbox.top_x = self.pos_x;
         self.hitbox.top_y = self.pos_y;
+
+        let mut prefix = "/hit_animation/hit_animation_".to_owned();
+        if self.owner == 1
+        {
+            prefix += "red_";
+        }
+        else
+        {
+            prefix += "green_";
+        }
+
+        if self.is_dead
+        {
+            anims.push( Anim::new(_ctx, self.pos_x, self.pos_y, prefix, 3, 10 ) );
+        }
     }
 
     pub fn draw( &mut self, ctx: &mut Context )
@@ -66,6 +82,10 @@ impl Projectile
     pub fn is_dead( &self ) -> bool
     {
         //we also need to check out of bounds
+        if self.pos_x < -32.0 || self.pos_y < -32.0 || self.pos_x > ::WINDOW_WIDTH as f32 || self.pos_y > ::WINDOW_HEIGHT as f32
+        {
+            return true;
+        }
         self.is_dead
     }
 

@@ -8,6 +8,7 @@ mod hitbox;
 mod player;
 mod projectile;
 mod main_state;
+mod anim;
 
 use main_state::*;
 use tile::*;
@@ -17,8 +18,8 @@ use ggez::Context;
 use ggez::event;
 
 static GAME_TITLE: &'static str = "Ludum Dare";
-const WINDOW_WIDTH : u32 = ( NUM_TILES_X * TILE_SPACE ) as u32;
-const WINDOW_HEIGHT : u32 = ( NUM_TILES_Y * TILE_SPACE ) as u32;
+pub const WINDOW_WIDTH : u32 = ( NUM_TILES_X * TILE_SPACE ) as u32;
+pub const WINDOW_HEIGHT : u32 = ( NUM_TILES_Y * TILE_SPACE ) as u32;
 
 pub fn main() {
     let mut c = conf::Conf::new();

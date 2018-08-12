@@ -7,9 +7,10 @@ use player::*;
 use tile::*;
 use tilesheet::*;
 use projectile::*;
+use anim::*;
 
-pub const NUM_TILES_X : usize = TILE_SHEET_NUM_ACROSS + 2;
-pub const NUM_TILES_Y : usize = TILE_SHEET_NUM_DOWN + 2;
+pub const NUM_TILES_X : usize = TILE_SHEET_NUM_ACROSS + 6;
+pub const NUM_TILES_Y : usize = TILE_SHEET_NUM_DOWN + 6;
 
 const PLAYER_SPEED : f32 = 2.0;
 const EXPECTED_FRAME_RATE : f64 = 60.0;
@@ -33,18 +34,22 @@ pub struct MainState
     player2 : Player, 
     tile_map: TileMap,
     projectiles: Vec<Projectile>,
+    anims: Vec<Anim>,
 }
 
 impl MainState 
 {
     pub fn new(_ctx: &mut Context) -> GameResult<MainState> 
     {
+        let bg_color = graphics::Color::new( 0.0, 0.0, 0.0, 1.0);
+        graphics::set_background_color(_ctx, bg_color );
         let s = MainState 
         { 
             player1 : Player::new( _ctx, 1, ::WINDOW_WIDTH / 2, 160, Direction::DOWN ),
-            player2 : Player::new( _ctx, 2, ::WINDOW_WIDTH / 2, ::WINDOW_HEIGHT - 160, Direction::UP ),
+            player2 : Player::new( _ctx, 2, ::WINDOW_WIDTH / 2, ::WINDOW_HEIGHT - 300, Direction::UP ),
             tile_map: TileMap::new( _ctx, NUM_TILES_X, NUM_TILES_Y ),
             projectiles: Vec::new(),
+            anims: Vec::new(),
         };
         Ok(s)
     }
@@ -52,9 +57,10 @@ impl MainState
     fn reset( &mut self, _ctx: &mut Context)
     {
         self.player1 = Player::new( _ctx, 1, ::WINDOW_WIDTH / 2, 160, Direction::DOWN );
-        self.player2 = Player::new( _ctx, 2, ::WINDOW_WIDTH / 2, ::WINDOW_HEIGHT - 160, Direction::UP );
+        self.player2 = Player::new( _ctx, 2, ::WINDOW_WIDTH / 2, ::WINDOW_HEIGHT - 300, Direction::UP );
         self.tile_map = TileMap::new( _ctx, NUM_TILES_X, NUM_TILES_Y );
         self.projectiles = Vec::new();
+        self.anims = Vec::new();
     }
 }
 
@@ -75,14 +81,26 @@ impl event::EventHandler for MainState
         self.player2.update( &mut self.projectiles, &self.tile_map, factor );
         for ref mut projectile in &mut self.projectiles
         {
-            projectile.update(factor);
+            projectile.update( _ctx, factor, &mut self.anims);
+        } 
+        self.projectiles.retain(|projectile| {
+            !projectile.is_dead()
+        });
+        for ref mut anim in &mut self.anims
+        {
+            anim.update( );
         }
+        self.anims.retain(|anim| {!anim.is_dead()});
         Ok(())
     }
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> 
    {
         graphics::clear(ctx);
+        let bg_pos = graphics::Point2::new( 40.0, 45.0);
+        let background = graphics::Image::new( ctx, "/border.png" ).unwrap();
+        graphics::draw( ctx, &background, bg_pos, 0.0 );
+
 
         self.tile_map.draw( ctx );
         self.player1.draw( ctx );
@@ -91,11 +109,11 @@ impl event::EventHandler for MainState
         {
             projectile.draw( ctx );
         }
-
-        self.projectiles.retain(|projectile| {
-            !projectile.is_dead()
+        for ref mut anim in &mut self.anims
+        {
+            anim.draw(ctx);
         }
-        );
+
         graphics::present(ctx);
         Ok(())
     }

@@ -50,7 +50,7 @@ impl Player
 {
     pub fn new( ctx: &mut Context, id: u32, pos_x: u32, pos_y: u32, init_dir: Direction ) -> Player
     {
-        Player
+        let mut p = Player
         { 
             id, 
             pos_x: pos_x as f32,
@@ -66,7 +66,12 @@ impl Player
             tile_image_id: 1,
             hitbox: Hitbox::new( pos_x as f32, pos_y as f32, 32.0, 32.0 ),
             is_dead: false,
+        };
+        if id == 1 
+        {
+            //p.sprite = graphics::Image::new( ctx, "/robo_red.png" ).unwrap();
         }
+        p
     }
 
     fn get_adj_vel_x( &mut self ) -> f32

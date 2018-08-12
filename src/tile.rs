@@ -37,14 +37,14 @@ impl TileMap
             for x_index in 0..num_tiles_x
             {
                 //edge tiles
-                if y_index == 0 || y_index == num_tiles_y -1 || x_index == 0 || x_index == num_tiles_x -1 
+                if y_index < 3 || y_index >= num_tiles_y - 4 || x_index < 3 || x_index >= num_tiles_x -4 
                 {
                     tile_row.push( Tile::new_empty( _ctx, x_index, y_index ) );
                 }
                 else
                 {
                     //plus one on indices because we have a border
-                    tile_row.push( Tile::new( _ctx, x_index, y_index, res.sheetmap.map[y_index-1][x_index-1] ) );
+                    tile_row.push( Tile::new( _ctx, x_index, y_index, res.sheetmap.map[y_index-3][x_index-3] ) );
                 }
             }
 
@@ -130,13 +130,13 @@ impl Tile
             TileState::FULL =>
             {
                 //self.sprite = graphics::Image::solid( ctx, 32, tile_test_color() ).unwrap();
+                graphics::draw(ctx, &self.sprite, *pos, 0.0 );
             }
             TileState::EMPTY =>
             {
-                self.sprite = graphics::Image::solid( ctx, 32, tile_missing_color() ).unwrap();
+                //self.sprite = graphics::Image::solid( ctx, 32, tile_missing_color() ).unwrap();
             }
         }
-        graphics::draw(ctx, &self.sprite, *pos, 0.0 );
     } 
 
     pub fn draw( &mut self, ctx: &mut Context )
