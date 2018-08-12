@@ -4,7 +4,7 @@ use ggez::GameResult;
 
 use tilesheet::SheetMap;
 
-const TILE_SEPARATOR : usize = 1;
+const TILE_SEPARATOR : usize = 2;
 
 type TileRow = Vec<Tile>;
 

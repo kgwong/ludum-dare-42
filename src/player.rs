@@ -175,8 +175,13 @@ impl Player
         }
         else
         {
-            //self.throw_tile(ctx, tile_map);
+            self.throw_tile(ctx, tile_map);
         }
+    }
+    
+    fn throw_tile( &mut self, ctx: &mut Context, tile_map: &mut TileMap )
+    {
+        self.tile = None;
     }
 
     pub fn pickup_tile( &mut self, ctx: &mut Context, tile_map: &mut TileMap )
@@ -186,7 +191,7 @@ impl Player
             return;
         }
 
-        let tile_distance : usize = 33;
+        let tile_distance : usize = 34;
         let mut tile_index_x : usize = self.pos_x as usize / tile_distance;
         let mut tile_index_y : usize = self.pos_y as usize / tile_distance;
         println!("{}, {}", tile_index_x, tile_index_y);

@@ -16,8 +16,8 @@ use ggez::Context;
 use ggez::event;
 
 static GAME_TITLE: &'static str = "Ludum Dare";
-const WINDOW_HEIGHT : u32 = 16 * 33;
-const WINDOW_WIDTH : u32 = 8 * 33;
+const WINDOW_HEIGHT : u32 = 16 * 34;
+const WINDOW_WIDTH : u32 = 8 * 34;
 
 pub fn main() {
     let mut c = conf::Conf::new();

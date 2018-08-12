@@ -30,7 +30,7 @@ pub struct MainState
 {
     player1 : Player,
     player2 : Player, 
-    tile_map : TileMap,
+    tile_map: TileMap,
 }
 
 impl MainState 
@@ -80,8 +80,8 @@ impl event::EventHandler for MainState
             P2_LEFT => { self.player2.set_vel_x( -PLAYER_SPEED ) }
             P2_RIGHT => { self.player2.set_vel_x( PLAYER_SPEED ) }
 
-            P1_ACTION => { self.player1.pickup_tile( ctx, &mut self.tile_map ) }
-            P2_ACTION => { self.player2.pickup_tile( ctx, &mut self.tile_map ) }
+            P1_ACTION => { self.player1.on_action( ctx, &mut self.tile_map ) }
+            P2_ACTION => { self.player2.on_action( ctx, &mut self.tile_map ) }
             
             _ => {}
         }
