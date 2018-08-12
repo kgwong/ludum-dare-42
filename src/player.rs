@@ -6,6 +6,7 @@ use std::f32::{self, consts};
 
 use tile::*;
 use projectile::*;
+use hitbox::*;
 
 const THROW_SPEED : f32 = 1.0;
 
@@ -30,6 +31,7 @@ pub struct Player
     sprite: graphics::Image,
     tile: Option<Tile>,
     tile_image_id: usize,
+    hitbox: Hitbox,
 }
 
 fn player_debug_color() -> graphics::Color
@@ -59,13 +61,25 @@ impl Player
             sprite: graphics::Image::new( ctx, "/robo.png" ).unwrap(),
             tile: None,
             tile_image_id: 1,
+            hitbox: Hitbox::new( pos_x as f32, pos_y as f32, 32.0, 32.0 ),
         }
     }
 
-    pub fn update( &mut self )
+    pub fn update( &mut self, projectiles: &mut Vec<Projectile> )
     {
         self.pos_x += self.vel_x;
         self.pos_y += self.vel_y;
+
+        self.hitbox.top_x = self.pos_x;
+        self.hitbox.top_y = self.pos_y;
+
+        for projectile in projectiles
+        {
+            if self.id != projectile.get_owner() && self.hitbox.check_collision( projectile.get_hitbox() )
+            {
+                projectile.kill();
+            }
+        }
     }
 
     fn get_center( &self ) -> graphics::Point2
@@ -74,6 +88,11 @@ impl Player
             ( self.pos_x + self.width as f32 / 2.0 ), 
             ( self.pos_y + self.height as f32 / 2.0 ),
             )
+    }
+
+    pub fn get_id( &self ) -> u32
+    {
+        self.id
     }
 
     pub fn draw( &mut self, ctx: &mut Context ) -> GameResult<()>

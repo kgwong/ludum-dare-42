@@ -5,6 +5,8 @@ use ggez::Context;
 
 use tile::*;
 
+use player::*;
+
 pub struct Projectile
 {
     owner: u32,
@@ -15,6 +17,7 @@ pub struct Projectile
     hitbox: Hitbox,
     sprite_id: usize,
     sprite: graphics::Image,
+    is_dead: bool,
 }
 
 impl Projectile
@@ -28,9 +31,10 @@ impl Projectile
             pos_y,
             vel_x,
             vel_y,
-            hitbox: Hitbox::new(),
+            hitbox: Hitbox::new( pos_x, pos_y, TILE_SIZE as f32, TILE_SIZE as f32 ),
             sprite_id,
-            sprite: get_image(ctx, sprite_id)
+            sprite: get_image(ctx, sprite_id),
+            is_dead: false,
         }
     }
 
@@ -38,13 +42,36 @@ impl Projectile
     {
         self.pos_x += self.vel_x;
         self.pos_y += self.vel_y;
+        self.hitbox.top_x = self.pos_x;
+        self.hitbox.top_y = self.pos_y;
     }
 
     pub fn draw( &mut self, ctx: &mut Context )
     {
-        let dest_point = graphics::Point2::new( self.pos_x as f32, self.pos_y as f32 );
+        let dest_point = graphics::Point2::new( self.pos_x, self.pos_y);
         graphics::draw(ctx, &self.sprite, dest_point, 0.0 );
     }
 
+    pub fn is_dead( &self ) -> bool
+    {
+        //we also need to check out of bounds
+        self.is_dead
+    }
+
+    pub fn kill( &mut self ) 
+    {
+        println!("dead");
+        self.is_dead = true;
+    }
+
+    pub fn get_hitbox( &self ) -> &Hitbox
+    {
+        &self.hitbox
+    }
+
+    pub fn get_owner( &self ) -> u32
+    {
+        self.owner
+    }
 
 }

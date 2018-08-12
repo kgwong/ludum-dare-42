@@ -53,8 +53,8 @@ impl event::EventHandler for MainState
     fn update(&mut self, _ctx: &mut Context) -> GameResult<()> 
     {
         //println!("FPS: {}", timer::get_fps(_ctx ) );
-        self.player1.update();
-        self.player2.update();
+        self.player1.update( &mut self.projectiles );
+        self.player2.update( &mut self.projectiles );
         for ref mut projectile in &mut self.projectiles
         {
             projectile.update();
@@ -72,6 +72,11 @@ impl event::EventHandler for MainState
         {
             projectile.draw( ctx );
         }
+
+        self.projectiles.retain(|projectile| {
+            !projectile.is_dead()
+        }
+        );
         graphics::present(ctx);
         Ok(())
     }
