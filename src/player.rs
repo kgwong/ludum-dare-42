@@ -108,10 +108,10 @@ impl Player
         self.hitbox.top_y = self.pos_y - self.height as f32 / 2.0;
 
         //check if we are standing on top of a tile
-        let center = self.get_center();
+        //let center = self.get_center();
         let tile_distance : usize = TILE_SPACE;
-        let mut tile_index_x : usize = self.pos_x as usize / tile_distance;
-        let mut tile_index_y : usize = self.pos_y as usize / tile_distance;
+        let tile_index_x : usize = self.pos_x as usize / tile_distance;
+        let tile_index_y : usize = self.pos_y as usize / tile_distance;
 
         let tile = &tile_map.map[tile_index_y][tile_index_x];
         match tile.get_state()
@@ -268,9 +268,9 @@ impl Player
     {
         match self.dir
         {
-            Direction::LEFT => { -32.0 }
-            Direction::RIGHT => { 32.0 }
-            _ => { 0.0 }
+            Direction::LEFT => { -48.0 }
+            Direction::RIGHT => { 16.0 }
+            _ => { -16.0 }
         }
     }
 
@@ -278,9 +278,9 @@ impl Player
     {
         match self.dir
         {
-            Direction::UP => { -32.0 }
-            Direction::DOWN => { 32.0 }
-            _ => { 0.0 }
+            Direction::UP => { -48.0 }
+            Direction::DOWN => { 16.0 }
+            _ => { -16.0 }
         }
     }
 
@@ -356,7 +356,6 @@ impl Player
             TileState::FULL =>
             {
                 tile.change_state( TileState::EMPTY );
-                let image = graphics::Image::solid( ctx, 32, tile_test_color() ).unwrap();
                 self.tile_image_id = tile.image_id;
                 self.tile = Some( Tile::new( ctx, 0, 0, self.tile_image_id ) );
             }
