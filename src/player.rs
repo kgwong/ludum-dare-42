@@ -29,6 +29,7 @@ pub struct Player
     vel_y: f32,
     dir: Direction,
     sprite: graphics::Image,
+    shadow_sprite: graphics::Image,
     tile: Option<Tile>,
     tile_image_id: usize,
     hitbox: Hitbox,
@@ -60,6 +61,7 @@ impl Player
             vel_y: 0.0,
             dir: init_dir,
             sprite: graphics::Image::new( ctx, "/robo.png" ).unwrap(),
+            shadow_sprite: graphics::Image::new( ctx, "/robo_shadow.png").unwrap(),
             tile: None,
             tile_image_id: 1,
             hitbox: Hitbox::new( pos_x as f32, pos_y as f32, 32.0, 32.0 ),
@@ -156,7 +158,17 @@ impl Player
         {
             return Ok(());
         }
-        //let center = self.get_center();
+
+        //draw player shadow
+        let top_right = graphics::Point2::new(self.pos_x + 5.0, self.pos_y + 2.0);
+        let param = graphics::DrawParam {
+            dest: top_right,
+            rotation: self.get_facing_radians(),
+            offset: graphics::Point2::new(0.5, 0.5),
+            ..Default::default()
+        };
+        graphics::draw_ex(ctx, &self.shadow_sprite, param );
+        //draw player   
         let top_right = graphics::Point2::new(self.pos_x, self.pos_y );
         let param = graphics::DrawParam {
             dest: top_right,
@@ -174,12 +186,22 @@ impl Player
         let tile_draw_pos : graphics::Point2 = graphics::Point2::new
         (
             self.pos_x + self.get_tile_offset_x(),
-            self.pos_y + self.get_tile_offset_y() 
+            self.pos_y + self.get_tile_offset_y()
+        );
+        let shadow_draw_pos : graphics::Point2 = graphics::Point2::new
+        (
+            self.pos_x + self.get_tile_offset_x() + 2.0,
+            self.pos_y + self.get_tile_offset_y() + 5.0
         );
         match self.tile
         {
             Some( ref mut tile ) =>
             {
+                //draw the tile shadow
+                let color = graphics::Color::new( 0.0, 0.0, 0.0, 0.7);
+                let shadow = graphics::Image::solid( ctx, 32, color).unwrap();
+                graphics::draw(ctx, &shadow, shadow_draw_pos, 0.0);
+                //then draw the tile
                 tile.draw_at_pos(ctx, &tile_draw_pos );
             }
             None => {}
