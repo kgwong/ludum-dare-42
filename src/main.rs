@@ -22,6 +22,11 @@ pub const WINDOW_WIDTH : u32 = ( NUM_TILES_X * TILE_SPACE ) as u32;
 pub const WINDOW_HEIGHT : u32 = ( NUM_TILES_Y * TILE_SPACE ) as u32;
 
 pub fn main() {
+    println!( "Welcome to <>");
+    println!( "Try to hit your opponent with floor tiles and avoid falling off!");
+    println!( "P1: WASD, Spacebar");
+    println!( "P2: Arrow Keys, Enter");
+    println!( "F5 to reset the game");
     let mut c = conf::Conf::new();
     c.window_setup.title = GAME_TITLE.to_string();
     c.window_mode.width = WINDOW_WIDTH;

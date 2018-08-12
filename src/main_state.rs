@@ -74,8 +74,9 @@ impl event::EventHandler for MainState
         let factor = delta / (EXPECTED_TIME_BETWEEN_FRAMES) as f32;
 
         if timer::get_ticks(_ctx) % 1000 == 0 {
-            println!("Average FPS: {}", timer::get_fps(_ctx));
+            /*println!("Average FPS: {}", timer::get_fps(_ctx));
             println!("Factor is  {}", factor);
+            */
         }
 
         self.player1.update( _ctx, &mut self.projectiles, &mut self.anims, &self.tile_map, factor );
