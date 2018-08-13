@@ -78,17 +78,13 @@ impl event::EventHandler for MainState
         if (self.player1.is_dead())
         {
             self.message = graphics::Text::new(_ctx, "Player2 wins", &font)?;
-        } else if (self.player2.is_dead())
+        } 
+        else if (self.player2.is_dead())
         {
             self.message = graphics::Text::new(_ctx, "Player1 wins", &font)?;
         } else {
             let delta = (timer::duration_to_f64(timer::get_delta(_ctx))) as f32;
             let factor = delta / (EXPECTED_TIME_BETWEEN_FRAMES) as f32;
-
-            if timer::get_ticks(_ctx) % 1000 == 0 {
-                println!("Average FPS: {}", timer::get_fps(_ctx));
-                println!("Factor is  {}", factor);
-            }
 
             self.player1.update( _ctx, &mut self.projectiles, &mut self.anims, &self.tile_map, factor );
             self.player2.update( _ctx, &mut self.projectiles, &mut self.anims, &self.tile_map, factor );
