@@ -82,26 +82,31 @@ impl event::EventHandler for MainState
         else if (self.player2.is_dead())
         {
             self.message = graphics::Text::new(_ctx, "Player1 wins", &font)?;
-        } else {
-            let delta = (timer::duration_to_f64(timer::get_delta(_ctx))) as f32;
-            let factor = delta / (EXPECTED_TIME_BETWEEN_FRAMES) as f32;
-
-            self.player1.update( _ctx, &mut self.projectiles, &mut self.anims, &self.tile_map, factor );
-            self.player2.update( _ctx, &mut self.projectiles, &mut self.anims, &self.tile_map, factor );
-            for ref mut projectile in &mut self.projectiles
-            {
-                projectile.update( _ctx, factor, &mut self.anims);
-            } 
-            self.projectiles.retain(|projectile| {
-                !projectile.is_dead()
-            });
-            for ref mut anim in &mut self.anims
-            {
-                anim.update( );
-            }
-
-            self.anims.retain(|anim| {!anim.is_dead()});
+        } 
+        else
+        {
+            let smaller_font = graphics::Font::new(_ctx, "/DejaVuSansMono.ttf", 10)?;
+            self.message = graphics::Text::new(_ctx, "P1: wasd + spacebar, P2: arrow + enter.", &smaller_font)?;
         }
+
+        let delta = (timer::duration_to_f64(timer::get_delta(_ctx))) as f32;
+        let factor = delta / (EXPECTED_TIME_BETWEEN_FRAMES) as f32;
+
+        self.player1.update( _ctx, &mut self.projectiles, &mut self.anims, &self.tile_map, factor );
+        self.player2.update( _ctx, &mut self.projectiles, &mut self.anims, &self.tile_map, factor );
+        for ref mut projectile in &mut self.projectiles
+        {
+            projectile.update( _ctx, factor, &mut self.anims);
+        } 
+        self.projectiles.retain(|projectile| {
+            !projectile.is_dead()
+        });
+        for ref mut anim in &mut self.anims
+        {
+            anim.update( );
+        }
+
+        self.anims.retain(|anim| {!anim.is_dead()});
 
 
         Ok(())
@@ -115,21 +120,17 @@ impl event::EventHandler for MainState
         graphics::draw( ctx, &background, bg_pos, 0.0 );
 */
 
-        if (!self.player1.is_dead() && !self.player2.is_dead())
+        self.tile_map.draw( ctx );
+        self.player1.draw( ctx );
+        self.player2.draw( ctx );
+        for ref mut projectile in &mut self.projectiles
         {
-            self.tile_map.draw( ctx );
-            self.player1.draw( ctx );
-            self.player2.draw( ctx );
-            for ref mut projectile in &mut self.projectiles
-            {
-                projectile.draw( ctx );
-            }
-            for ref mut anim in &mut self.anims
-            {
-                anim.draw(ctx);
-            }
+            projectile.draw( ctx );
         }
-
+        for ref mut anim in &mut self.anims
+        {
+            anim.draw(ctx);
+        }
 
         let dest_point = graphics::Point2::new(10.0, 10.0);
         graphics::draw(ctx, &self.message, dest_point, 0.0)?;
