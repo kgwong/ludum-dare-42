@@ -74,14 +74,18 @@ impl event::EventHandler for MainState
     fn update(&mut self, _ctx: &mut Context) -> GameResult<()> 
     {
 
-        let font = graphics::Font::new(_ctx, "/DejaVuSansMono.ttf", 32)?;
-        if (self.player1.is_dead())
+        let font = graphics::Font::new(_ctx, "/DejaVuSansMono.ttf", 24)?;
+        if self.player1.is_dead() && self.player2.is_dead() 
         {
-            self.message = graphics::Text::new(_ctx, "Player2 wins", &font)?;
+            self.message = graphics::Text::new(_ctx, "F5 to reset", &font)?;
+        }
+        else if self.player1.is_dead() 
+        {
+            self.message = graphics::Text::new(_ctx, "Player2 wins. F5 to reset", &font)?;
         } 
-        else if (self.player2.is_dead())
+        else if self.player2.is_dead()
         {
-            self.message = graphics::Text::new(_ctx, "Player1 wins", &font)?;
+            self.message = graphics::Text::new(_ctx, "Player1 wins. F5 to reset", &font)?;
         } 
         else
         {
