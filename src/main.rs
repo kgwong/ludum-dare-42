@@ -17,12 +17,12 @@ use ggez::conf;
 use ggez::Context;
 use ggez::event;
 
-static GAME_TITLE: &'static str = "Ludum Dare";
+static GAME_TITLE: &'static str = "Tile League";
 pub const WINDOW_WIDTH : u32 = ( NUM_TILES_X * TILE_SPACE ) as u32;
 pub const WINDOW_HEIGHT : u32 = ( NUM_TILES_Y * TILE_SPACE ) as u32;
 
 pub fn main() {
-    println!( "Welcome to <>");
+    println!( "Welcome to Tile League!");
     println!( "Try to hit your opponent with floor tiles and avoid falling off!");
     println!( "P1: WASD, Spacebar");
     println!( "P2: Arrow Keys, Enter");
@@ -31,7 +31,7 @@ pub fn main() {
     c.window_setup.title = GAME_TITLE.to_string();
     c.window_mode.width = WINDOW_WIDTH;
     c.window_mode.height = WINDOW_HEIGHT;
-    let ctx = &mut Context::load_from_conf("ludum_dare", "ggez", c).unwrap();
+    let ctx = &mut Context::load_from_conf("Tile League", "ggez", c).unwrap();
     let state = &mut MainState::new(ctx).unwrap();
     event::run(ctx, state).unwrap();
 }

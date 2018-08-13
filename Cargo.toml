@@ -1,5 +1,5 @@
 [package]
-name = "ludum_dare"
+name = "Tile-League"
 version = "0.1.0"
 authors = ["Kevin Wong <wong.kevin47@gmail.com>"]
 build = "build.rs"
