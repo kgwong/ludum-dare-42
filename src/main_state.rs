@@ -1,7 +1,7 @@
 use ggez::*;
 use ggez::event::*;
 use ggez::timer::*;
-use ggez::graphics::{DrawMode, Point2};
+use ggez::graphics::{DrawMode, Point2, Text};
 
 use player::*;
 use tile::*;
@@ -35,7 +35,8 @@ pub struct MainState
     player2 : Player, 
     tile_map: TileMap,
     projectiles: Vec<Projectile>,
-    anims: Vec<Anim>,
+    anims: Vec<Anim>, 
+    message: graphics::Text,
 }
 
 impl MainState 
@@ -44,6 +45,8 @@ impl MainState
     {
         let bg_color = graphics::Color::new( 0.0, 0.0, 0.0, 1.0);
         graphics::set_background_color(_ctx, bg_color );
+
+        let font = graphics::Font::new(_ctx, "/DejaVuSansMono.ttf", 10)?;
         let s = MainState 
         { 
             player1 : Player::new( _ctx, 1, ::WINDOW_WIDTH / 2, PLAYER_SPAWN_OFFSET, Direction::DOWN ),
@@ -51,6 +54,7 @@ impl MainState
             tile_map: TileMap::new( _ctx, NUM_TILES_X, NUM_TILES_Y ),
             projectiles: Vec::new(),
             anims: Vec::new(),
+            message: graphics::Text::new(_ctx, "P1: wasd + spacebar, P2: arrow + enter.", &font)?
         };
         Ok(s)
     }
@@ -70,28 +74,40 @@ impl event::EventHandler for MainState
     fn update(&mut self, _ctx: &mut Context) -> GameResult<()> 
     {
 
-        let delta = (timer::duration_to_f64(timer::get_delta(_ctx))) as f32;
-        let factor = delta / (EXPECTED_TIME_BETWEEN_FRAMES) as f32;
+        let font = graphics::Font::new(_ctx, "/DejaVuSansMono.ttf", 32)?;
+        if (self.player1.is_dead())
+        {
+            self.message = graphics::Text::new(_ctx, "Player2 wins", &font)?;
+        } else if (self.player2.is_dead())
+        {
+            self.message = graphics::Text::new(_ctx, "Player1 wins", &font)?;
+        } else {
+            let delta = (timer::duration_to_f64(timer::get_delta(_ctx))) as f32;
+            let factor = delta / (EXPECTED_TIME_BETWEEN_FRAMES) as f32;
 
-        if timer::get_ticks(_ctx) % 1000 == 0 {
-            println!("Average FPS: {}", timer::get_fps(_ctx));
-            println!("Factor is  {}", factor);
+            if timer::get_ticks(_ctx) % 1000 == 0 {
+                println!("Average FPS: {}", timer::get_fps(_ctx));
+                println!("Factor is  {}", factor);
+            }
+
+            self.player1.update( _ctx, &mut self.projectiles, &mut self.anims, &self.tile_map, factor );
+            self.player2.update( _ctx, &mut self.projectiles, &mut self.anims, &self.tile_map, factor );
+            for ref mut projectile in &mut self.projectiles
+            {
+                projectile.update( _ctx, factor, &mut self.anims);
+            } 
+            self.projectiles.retain(|projectile| {
+                !projectile.is_dead()
+            });
+            for ref mut anim in &mut self.anims
+            {
+                anim.update( );
+            }
+
+            self.anims.retain(|anim| {!anim.is_dead()});
         }
 
-        self.player1.update( _ctx, &mut self.projectiles, &mut self.anims, &self.tile_map, factor );
-        self.player2.update( _ctx, &mut self.projectiles, &mut self.anims, &self.tile_map, factor );
-        for ref mut projectile in &mut self.projectiles
-        {
-            projectile.update( _ctx, factor, &mut self.anims);
-        } 
-        self.projectiles.retain(|projectile| {
-            !projectile.is_dead()
-        });
-        for ref mut anim in &mut self.anims
-        {
-            anim.update( );
-        }
-        self.anims.retain(|anim| {!anim.is_dead()});
+
         Ok(())
     }
 
@@ -103,18 +119,24 @@ impl event::EventHandler for MainState
         graphics::draw( ctx, &background, bg_pos, 0.0 );
 */
 
-        self.tile_map.draw( ctx );
-        self.player1.draw( ctx );
-        self.player2.draw( ctx );
-        for ref mut projectile in &mut self.projectiles
+        if (!self.player1.is_dead() && !self.player2.is_dead())
         {
-            projectile.draw( ctx );
-        }
-        for ref mut anim in &mut self.anims
-        {
-            anim.draw(ctx);
+            self.tile_map.draw( ctx );
+            self.player1.draw( ctx );
+            self.player2.draw( ctx );
+            for ref mut projectile in &mut self.projectiles
+            {
+                projectile.draw( ctx );
+            }
+            for ref mut anim in &mut self.anims
+            {
+                anim.draw(ctx);
+            }
         }
 
+
+        let dest_point = graphics::Point2::new(10.0, 10.0);
+        graphics::draw(ctx, &self.message, dest_point, 0.0)?;
         graphics::present(ctx);
         Ok(())
     }
